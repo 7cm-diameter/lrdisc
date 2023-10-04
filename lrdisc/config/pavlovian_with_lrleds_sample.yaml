@@ -1,0 +1,29 @@
+Comport:
+  port:                    "/dev/ttyACM0"
+  baudrate:                115200
+  warmup:                  2.0
+
+Experimental:
+  light-duration:          1.
+  reward-duration:         0.015
+  number-of-trial:         200
+  inter-stimulus-interval: 19.
+  interval-range:          10.
+  light-pin:               [4, 8]
+  reward-pin:              [2, 3]
+  response-pin:            [-9, -10]
+
+Metadata:
+  subject:                 "enter-subject-name"
+  condition:               "pavlovian-with-lrleds"
+
+PinMode:
+  10:                      "SSINPUT"
+  9:                       "SSINPUT"
+  8:                       "OUTPUT"
+  7:                       "OUTPUT"
+  6:                       "OUTPUT"
+  5:                       "OUTPUT"
+  4:                       "OUTPUT"
+  3:                       "OUTPUT"
+  2:                       "OUTPUT"
