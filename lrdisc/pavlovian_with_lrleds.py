@@ -11,20 +11,20 @@ async def control(agent: Agent, ino: Arduino, expvars: Experimental) -> None:
     reward_duration = expvars.get("reward-duration", 0.02)
 
     light_pins = expvars.get("light-pin", [4, 8])
-    reward_pin = expvars.get("reward-pin", [2, 3])
+    reward_pins = expvars.get("reward-pin", [2, 3])
 
     mean_isi = expvars.get("inter-stimulus-interval", 19.)
     range_isi = expvars.get("interval-range", 10.)
 
     number_of_trial = expvars.get("number-of-trial", 200)
     isis = unif_rng(mean_isi, range_isi, number_of_trial)
-    reward_positions = elementwise_shuffle(repeat([0, 1], [number_of_trial // 2, number_of_trial // 2]))
-    trials = TrialIterator2(isis)
+    reward_pin_each_trial = elementwise_shuffle(repeat(reward_pins, [number_of_trial // 2, number_of_trial // 2]))
+    trials = TrialIterator2(isis, reward_pin_each_trial)
 
     try:
         while agent.working():
             agent.send_to(RECORDER, timestamp(START))
-            for i, isi in trials:
+            for i, isi, reward_pin in trials:
                 print(f"Trial {i}: Cue will be presented {isi} secs after.")
                 await agent.sleep(isis[i])
                 agent.send_to(RECORDER, timestamp(light_pins[0]))
