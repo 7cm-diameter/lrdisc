@@ -26,7 +26,7 @@ async def control(agent: Agent, ino: Arduino, expvars: Experimental) -> None:
             agent.send_to(RECORDER, timestamp(START))
             for i, isi, reward_pin in trials:
                 print(f"Trial {i}: Cue will be presented {isi} secs after.")
-                await agent.sleep(isis[i])
+                await agent.sleep(isi)
                 agent.send_to(RECORDER, timestamp(light_pins[0]))
                 agent.send_to(RECORDER, timestamp(light_pins[-1]))
                 ino.digital_write(light_pins[0], HIGH)
