@@ -21,8 +21,9 @@ async def flush_message_for(agent: Agent, duration: float):
 async def fixed_interval_with_postpone(agent: Agent, duration: float, correct: str, limit: float = 3.):
     duration_count_down = duration
     while duration_count_down >= 0. and agent.working():
+        s = perf_counter()
         mail = await agent.try_recv(limit)
-        duration_count_down -= perf_counter()
+        duration_count_down -= perf_counter() - s
         if mail is None:
             break
         _, response = mail
@@ -43,7 +44,7 @@ async def control(agent: Agent, ino: Arduino, expvars: Experimental) -> None:
 
     number_of_trial = expvars.get("number-of-trial", 200)
     isis = unif_rng(mean_isi, range_isi, number_of_trial)
-    corrects = elementwise_shuffle(repeat(reward_pins, [number_of_trial // 2, number_of_trial // 2]))
+    corrects = elementwise_shuffle(repeat([0, 1], [number_of_trial // 2, number_of_trial // 2]))
     trials = TrialIterator2(isis, corrects)
 
     try:
@@ -57,8 +58,10 @@ async def control(agent: Agent, ino: Arduino, expvars: Experimental) -> None:
                 await fixed_interval_with_postpone(agent, light_duration, response_pins[correct])
                 agent.send_to(RECORDER, timestamp(-light_pins[correct]))
                 ino.digital_write(light_pins[correct], LOW)
+                agent.send_to(RECORDER, timestamp(reward_pins[correct]))
                 ino.digital_write(reward_pins[correct], HIGH)
                 await agent.sleep(reward_duration)
+                ino.digital_write(reward_pins[correct], LOW)
                 agent.send_to(RECORDER, timestamp(-reward_pins[correct]))
             agent.send_to(OBSERVER, NEND)
             agent.send_to(RECORDER, timestamp(NEND))
