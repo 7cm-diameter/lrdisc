@@ -7,7 +7,7 @@ from comprex.util import timestamp
 from pino.ino import HIGH, LOW, Arduino
 
 
-CONTROLLER = "Contoroller"
+CONTROLLER = "Controller"
 
 
 async def flush_message_for(agent: Agent, duration: float):
@@ -35,14 +35,14 @@ async def control(agent: Agent, ino: Arduino, expvars: Experimental):
     reward_pins = expvars.get("reward-pin", [2, 3])
     response_pins = list(map(str, expvars.get("response-pin", [-9, -10])))
 
-    async def variable_ratio_with_limit(block_lenght: int, component: int, current_component: int):
-        ratio = list(map(int, unif_rng(mean_required_response + .5, range_required_response, block_lenght)))
+    async def variable_ratio_with_limit(block_length: int, component: int, current_component: int):
+        ratio = list(map(int, unif_rng(mean_required_response + .5, range_required_response, block_length)))
         agent.send_to(RECORDER, timestamp(light_pins[component]))
         ino.digital_write(light_pins[component], HIGH)
         i = 0
         for r in ratio:
             i += 1
-            print(f"{i}/{block_lenght} trial in {current_component} component")
+            print(f"{i}/{block_length} trial in {current_component} component")
             count = 0
             while count < r:
                 mail = await agent.try_recv(timelimit)
