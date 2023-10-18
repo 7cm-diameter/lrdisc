@@ -59,6 +59,7 @@ async def control(agent: Agent, ino: Arduino, expvars: Experimental):
             await agent.sleep(reward_duration)
             agent.send_to(RECORDER, timestamp(-reward_pins[component]))
             ino.digital_write(reward_pins[component], LOW)
+            await flush_message_for(agent, 2.)
         agent.send_to(RECORDER, timestamp(-light_pins[component]))
         ino.digital_write(light_pins[component], LOW)
 
