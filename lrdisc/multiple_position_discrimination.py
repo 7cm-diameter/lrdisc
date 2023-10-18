@@ -29,7 +29,7 @@ async def control(agent: Agent, ino: Arduino, expvars: Experimental):
 
     mean_required_response = expvars.get("mean_required-response", 10)
     range_required_response = expvars.get("range-required-response", 5)
-    timelimit = expvars.get("timelimit", 60.)
+    timelimit = expvars.get("timelimit", 30.)
 
     light_pins = expvars.get("light-pin", [4, 8])
     reward_pins = expvars.get("reward-pin", [2, 3])
